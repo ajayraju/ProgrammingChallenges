@@ -1,6 +1,8 @@
 ﻿using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -44,6 +46,16 @@ namespace ProgrammingChallengesCode.DataStructures.PokerHands
 
         /// <summary>
         /// method to compute the rank of a hand.
+        /// Options of hand rank vary from being :  
+        /// a. Hand Rank.
+        /// b. Pair :  Two of the five cards in the hand have the same value.
+        /// c. Two pair :  The hand contains two different pairs.
+        /// d. Three of a kind :  Three of the cards in the hand have the same value.
+        /// e. Straight :  Hand contains five cards with consecutive values.
+        /// f. Flush : Hand contains five cards of the same suit.
+        /// g. Full House :  Hand contains, three cards of the same value , with the other two forming a pair.
+        /// h. Four of a Kind : Four cards with the same value.
+        /// i. Straight Flush: Five cards of the same suit with consecutive values.
         /// </summary>
         /// <returns></returns>
         private HandRank GetHandRank()
@@ -195,6 +207,9 @@ namespace ProgrammingChallengesCode.DataStructures.PokerHands
             }
             return -1;
         }
+
+        
+
         /// <summary>
         /// The hand contains two different pairs. Hands which both contain the same pairs
         /// are ranked by the value of their highest pair. 
@@ -206,26 +221,46 @@ namespace ProgrammingChallengesCode.DataStructures.PokerHands
         /// <returns></returns>
         private int CompareTwoPair(Hand hand1, Hand hand2)
         {
-            Card hand1BiggerCard;
-            Card hand2BiggerCard;
-            Card hand1SmallerCard;
-            Card hand2SmallerCard;
-            Card hand1RemainingCard;
-            Card hand2RemainingCard;
-            OrderCardsInHand(hand1, out hand1BiggerCard, out hand1SmallerCard, out hand1RemainingCard);
-            OrderCardsInHand(hand2, out hand2BiggerCard, out hand2SmallerCard,out hand2RemainingCard);
+
+            // pseudocode : Find the bigger pair, smaller pair and the remaining card.
+            // Compare the bigger pair, followed by the smaller pair, followed by the remaining card.
+            Card hand1BiggerCard = null ;
+            Card hand2BiggerCard  = null;
+            Card hand1SmallerCard  = null;
+            Card hand2SmallerCard = null;
+            Card hand1RemainingCard = null;
+            Card hand2RemainingCard  = null;
+            
+            OrderCardsInHand(hand1, ref hand1BiggerCard, ref hand1SmallerCard, ref hand1RemainingCard);
+            OrderCardsInHand(hand2, ref hand2BiggerCard, ref hand2SmallerCard, ref hand2RemainingCard);
             
             if (hand1BiggerCard != null && hand2BiggerCard != null && hand1BiggerCard.CompareTo(hand2BiggerCard) != 0)
                 return hand1BiggerCard.CompareTo(hand2BiggerCard);
+            
             else if (hand1SmallerCard != null && hand2SmallerCard != null &&
                      hand1SmallerCard.CompareTo(hand2SmallerCard) != 0)
                 return hand1SmallerCard.CompareTo(hand2SmallerCard);
+            
             return hand1RemainingCard.CompareTo(hand2RemainingCard);
         }
 
-        private static void OrderCardsInHand(Hand hand1, out Card hand1BiggerCard, out Card hand1SmallerCard,
-            out Card hand1RemainingCard)
+        /// <summary>
+        /// Private helper used to find the bigger and smaller cards in a hand forming
+        /// a two pair.
+        /// </summary>
+        /// <param name="hand1"></param>
+        /// <param name="biggerCard"></param>
+        /// <param name="smallerCard"></param>
+        /// <param name="remainingCard"></param>
+        private static void OrderCardsInHand(Hand hand1, ref Card biggerCard, ref Card smallerCard,
+            ref Card remainingCard)
         {
+
+            /*
+             * Find the cards which form the double pair.
+             * Isolate the card from the bigger pair and the smaller pair and compare them.
+             * Find the biggerCard and the smaller card and the remaining card.
+             * */
             Card[] hand1Cards = hand1.HandCards;
             int[] hand1CardValues = Hand.GetCardValuesFromHand(hand1Cards);
             
@@ -235,30 +270,30 @@ namespace ProgrammingChallengesCode.DataStructures.PokerHands
             {
                 if (hand1CardValues[0] > hand1CardValues[2])
                 {
-                    hand1BiggerCard = hand1Cards[0];
-                    hand1SmallerCard = hand1Cards[2];
+                    biggerCard = hand1Cards[0];
+                    smallerCard = hand1Cards[2];
                 }
                 else
                 {
-                    hand1BiggerCard = hand1Cards[2];
-                    hand1SmallerCard = hand1Cards[0];
+                    biggerCard = hand1Cards[2];
+                    smallerCard = hand1Cards[0];
                 }
-                hand1RemainingCard = hand1Cards[4];
+                remainingCard = hand1Cards[4];
             }
             else if (hand1CardValues[0] != hand1CardValues[1] && hand1CardValues[1] == hand1CardValues[2] &&
                      hand1CardValues[3] == hand1CardValues[4] && hand1CardValues[2] != hand1CardValues[3])
             {
                 if (hand1CardValues[1] > hand1CardValues[3])
                 {
-                    hand1BiggerCard = hand1Cards[1];
-                    hand1SmallerCard = hand1Cards[3];
+                    biggerCard = hand1Cards[1];
+                    smallerCard = hand1Cards[3];
                 }
                 else
                 {
-                    hand1BiggerCard = hand1Cards[3];
-                    hand1SmallerCard = hand1Cards[1];
+                    biggerCard = hand1Cards[3];
+                    smallerCard = hand1Cards[1];
                 }
-                hand1RemainingCard = hand1Cards[0];
+                remainingCard = hand1Cards[0];
             }
         }
 
@@ -293,6 +328,63 @@ namespace ProgrammingChallengesCode.DataStructures.PokerHands
         
 
         #endregion
+        /// <summary>
+        /// Method to determine the winner , give two hands.
+        /// </summary>
+        /// <param name="hand1"></param>
+        /// <param name="hand2"></param>
+        /// <returns></returns>
+        private string GetWinner(Hand hand1, Hand hand2)
+        {
+            HandRank hand1Rank = hand1.GetHandRank();
+            HandRank hand2Rank = hand2.GetHandRank();
+
+            //get the relative ordering between hand1 and hand2.
+            
+            int cmp = hand1Rank.CompareTo(hand2Rank);
+            if (cmp > 0) return hand1.HandName;
+            else if (cmp < 0) return hand2.HandName;
+
+            Card[] hand1Cards = hand1.HandCards;
+            Card[] hand2Cards = hand2.HandCards;
+
+            // both hands rank same.
+            switch (hand1Rank)
+            {
+                case HandRank.StraightFlush:
+                    cmp = CompareHighCard(hand1, hand2);
+                    break;
+                case HandRank.FourOfAKind:
+                    cmp = CompareFourOfAKind(hand1).CompareTo(CompareFourOfAKind(hand2));
+                    break;
+                case HandRank.ThreeOfAKind:
+                    cmp = CompareThreeOfAKind(hand1).CompareTo(CompareThreeOfAKind(hand2));
+                    break;
+                case HandRank.FullHouse:
+                    cmp = CompareThreeOfAKind(hand1).CompareTo(CompareThreeOfAKind(hand2));
+                    break;
+                case HandRank.Flush:
+                    cmp = CompareHighCardRecursive(hand1, hand2);
+                    break;
+                case HandRank.Straight:
+                    cmp = CompareHighCard(hand1, hand2);
+                    break;
+                case HandRank.TwoPair :
+                    cmp = CompareTwoPair(hand1, hand2);
+                    break;
+                case HandRank.Pair:
+                    cmp = ComparePair(hand1, hand2);
+                    break;
+                case HandRank.HighCard :
+                    cmp = CompareHighCard(hand1, hand2);
+                    break;
+                default:
+                    break;
+            }
+            return (cmp > 0) ? hand1.HandName : cmp < 0 ? hand2.HandName : "Tie";
+
+        }
+
         private static int[] GetCardValuesFromHand(Card[] hand)
         {
             int[] cardValues = new int[hand.Length];
