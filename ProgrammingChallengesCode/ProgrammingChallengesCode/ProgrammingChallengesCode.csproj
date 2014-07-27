@@ -41,6 +41,7 @@
   <ItemGroup>
     <Compile Include="DataStructures\JollyJumpers\JollyJumpers.cs" />
     <Compile Include="DataStructures\PokerHands\Hand.cs" />
+    <Compile Include="DataStructures\PokerHands\Card.cs" />
     <Compile Include="DataStructures\PokerHands\PokerHands.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

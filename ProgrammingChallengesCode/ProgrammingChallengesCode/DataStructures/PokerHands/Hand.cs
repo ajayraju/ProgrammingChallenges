@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace ProgrammingChallengesCode.DataStructures.PokerHands
 {
+    /// <summary>
+    /// Enum to indicate possible outcomes from a hand.
+    /// </summary>
     public enum HandRank
     {
         HighCard,
@@ -21,16 +24,14 @@ namespace ProgrammingChallengesCode.DataStructures.PokerHands
         StraightFlush
     }
 
+    /// <summary>
+    /// Class to model a hand in a game of poker.
+    /// </summary>
     public class Hand
     {
-        public Card[] HandCards { get; set; }
-        public string HandName { get; set; }
-
-        public Hand()
-        {
-            HandCards = null;
-            HandName = string.Empty;
-        }
+        
+        public Card[] HandCards { get; private set; }
+        public string HandName { get; private set; }
 
         public Hand(string handString, string name)
         {
@@ -38,8 +39,10 @@ namespace ProgrammingChallengesCode.DataStructures.PokerHands
             HandCards =  new Card[cards.Length];
             for (int i = 0; i < cards.Length; i++)
             {
+                // initialize each of the cards in the hand.
                 HandCards[i] =  new Card(cards[i]);
             }
+            // sort the cards in the hand using the comparator provided in the Card class.
             Array.Sort(HandCards);
             HandName = name;
         }
@@ -58,7 +61,7 @@ namespace ProgrammingChallengesCode.DataStructures.PokerHands
         /// i. Straight Flush: Five cards of the same suit with consecutive values.
         /// </summary>
         /// <returns></returns>
-        private HandRank GetHandRank()
+        public HandRank GetHandRank()
         {
             Card[] tempHand = this.HandCards;
             if(IsStraightFlush(tempHand)) return HandRank.StraightFlush;
@@ -73,6 +76,25 @@ namespace ProgrammingChallengesCode.DataStructures.PokerHands
         }
 
         #region Card Rank Helpers
+        /// <summary>
+        /// Helper method to get the values from a hand of cards.
+        /// </summary>
+        /// <param name="hand"></param>
+        /// <returns></returns>
+        private static int[] GetCardValuesFromHand(Card[] hand)
+        {
+            int[] cardValues = new int[hand.Length];
+            for (int i = 0; i < hand.Length; i++)
+            {
+                cardValues[i] = hand[i].Value;
+            }
+            return cardValues;
+        }
+        /// <summary>
+        /// If two cards share the same value.
+        /// </summary>
+        /// <param name="hand">Hand of cards.</param>
+        /// <returns></returns>
         private static bool IsPair(Card[] hand)
         {
             var cardValues = GetCardValuesFromHand(hand);
@@ -82,7 +104,11 @@ namespace ProgrammingChallengesCode.DataStructures.PokerHands
                 cardValues[3] ==  cardValues[4] && cardValues[2] != cardValues[3]) ;
 
         }
-
+        /// <summary>
+        /// If two pairs exist in a hand of cards.
+        /// </summary>
+        /// <param name="hand"></param>
+        /// <returns></returns>
         private static bool IsTwoPair(Card[] hand)
         {
             var cardValues = GetCardValuesFromHand(hand);
@@ -92,19 +118,32 @@ namespace ProgrammingChallengesCode.DataStructures.PokerHands
                         cardValues[2] != cardValues[3] && cardValues[0] != cardValues[1]);
         }
 
+        /// <summary>
+        /// Three of the cards in the hand have the same value.
+        /// </summary>
+        /// <param name="hand"></param>
+        /// <returns></returns>
         private static bool IsThreeOfAKind(Card[] hand)
         {
             var cardValues = GetCardValuesFromHand(hand);
             return (cardValues[0] == cardValues[2] || cardValues[1] == cardValues[3] || cardValues[2] == cardValues[4]);
         }
 
-        
-
+        /// <summary>
+        /// Five cards with consecutive values.
+        /// </summary>
+        /// <param name="hand"></param>
+        /// <returns></returns>
         private static bool IsStraight(Card[] hand)
         {
             return (hand[4].Value - hand[0].Value == 4);
         }
 
+        /// <summary>
+        /// Five cards with the same suit.
+        /// </summary>
+        /// <param name="hand"></param>
+        /// <returns></returns>
         private static bool IsFlush(Card[] hand)
         {
             for (int i = 1; i < hand.Length; i++)
@@ -114,6 +153,12 @@ namespace ProgrammingChallengesCode.DataStructures.PokerHands
             return true;
         }
 
+        /// <summary>
+        /// Three of the cards in the hand have the same value, with the other 
+        /// two forming a pair.
+        /// </summary>
+        /// <param name="hand"></param>
+        /// <returns></returns>
         private static bool IsFullHouse(Card[] hand)
         {
             var cardValues = GetCardValuesFromHand(hand);
@@ -121,12 +166,22 @@ namespace ProgrammingChallengesCode.DataStructures.PokerHands
             return (cardValues[0] == cardValues[1] && cardValues[1] != cardValues[2] && (cardValues[2] == cardValues[4]));
         }
 
+        /// <summary>
+        /// Four cards have the same value.
+        /// </summary>
+        /// <param name="hand"></param>
+        /// <returns></returns>
         private static bool IsFourOfAKind(Card[] hand)
         {
             var cardValues = GetCardValuesFromHand(hand);
             return (cardValues[0] == cardValues[3] || cardValues[1] == cardValues[4]);
         }
 
+        /// <summary>
+        /// Five cards of the same suit with consecutive values.
+        /// </summary>
+        /// <param name="hand"></param>
+        /// <returns></returns>
         private static bool IsStraightFlush(Card[] hand)
         {
             return (IsStraight(hand) && IsFlush(hand));
@@ -135,14 +190,14 @@ namespace ProgrammingChallengesCode.DataStructures.PokerHands
         #endregion
         #region Equality Helper
 
-        private int CompareHighCard(Hand hand1, Hand hand2)
+        public static int CompareHighCard(Hand hand1, Hand hand2)
         {
             Card[] hand1Cards = hand1.HandCards;
             Card[] hand2Cards = hand1.HandCards;
             return hand1Cards[hand1Cards.Length - 1].CompareTo(hand2Cards[hand2Cards.Length - 1]);
         }
 
-        private int CompareHighCardRecursive(Hand hand1, Hand hand2)
+        public static int CompareHighCardRecursive(Hand hand1, Hand hand2)
         {
             Card[] hand1Cards = hand1.HandCards;
             Card[] hand2Cards = hand2.HandCards;
@@ -167,7 +222,7 @@ namespace ProgrammingChallengesCode.DataStructures.PokerHands
         /// <param name="hand1"></param>
         /// <param name="hand2"></param>
         /// <returns></returns>
-        private int ComparePair(Hand hand1, Hand hand2)
+        public static int ComparePair(Hand hand1, Hand hand2)
         {
             Card[] hand1Cards = hand1.HandCards;
             Card[] hand2Cards = hand2.HandCards;
@@ -219,7 +274,7 @@ namespace ProgrammingChallengesCode.DataStructures.PokerHands
         /// <param name="hand1"></param>
         /// <param name="hand2"></param>
         /// <returns></returns>
-        private int CompareTwoPair(Hand hand1, Hand hand2)
+        public static int CompareTwoPair(Hand hand1, Hand hand2)
         {
 
             // pseudocode : Find the bigger pair, smaller pair and the remaining card.
@@ -303,7 +358,7 @@ namespace ProgrammingChallengesCode.DataStructures.PokerHands
         /// </summary>
         /// <param name="tempHand"></param>
         /// <returns></returns>
-        private Card CompareFourOfAKind(Hand tempHand)
+        public static Card CompareFourOfAKind(Hand tempHand)
         {
             Card[] tempCards = tempHand.HandCards;
             if (tempCards[0].Equals(tempCards[3])) return tempCards[0];
@@ -316,7 +371,7 @@ namespace ProgrammingChallengesCode.DataStructures.PokerHands
         /// </summary>
         /// <param name="tempHand"></param>
         /// <returns></returns>
-        private Card CompareThreeOfAKind(Hand tempHand)
+        public static Card CompareThreeOfAKind(Hand tempHand)
         {
             Card[] tempCards = tempHand.HandCards;
             if (tempCards[0].Equals(tempCards[2])) return tempCards[0];
@@ -328,72 +383,6 @@ namespace ProgrammingChallengesCode.DataStructures.PokerHands
         
 
         #endregion
-        /// <summary>
-        /// Method to determine the winner , give two hands.
-        /// </summary>
-        /// <param name="hand1"></param>
-        /// <param name="hand2"></param>
-        /// <returns></returns>
-        private string GetWinner(Hand hand1, Hand hand2)
-        {
-            HandRank hand1Rank = hand1.GetHandRank();
-            HandRank hand2Rank = hand2.GetHandRank();
-
-            //get the relative ordering between hand1 and hand2.
-            
-            int cmp = hand1Rank.CompareTo(hand2Rank);
-            if (cmp > 0) return hand1.HandName;
-            else if (cmp < 0) return hand2.HandName;
-
-            Card[] hand1Cards = hand1.HandCards;
-            Card[] hand2Cards = hand2.HandCards;
-
-            // both hands rank same.
-            switch (hand1Rank)
-            {
-                case HandRank.StraightFlush:
-                    cmp = CompareHighCard(hand1, hand2);
-                    break;
-                case HandRank.FourOfAKind:
-                    cmp = CompareFourOfAKind(hand1).CompareTo(CompareFourOfAKind(hand2));
-                    break;
-                case HandRank.ThreeOfAKind:
-                    cmp = CompareThreeOfAKind(hand1).CompareTo(CompareThreeOfAKind(hand2));
-                    break;
-                case HandRank.FullHouse:
-                    cmp = CompareThreeOfAKind(hand1).CompareTo(CompareThreeOfAKind(hand2));
-                    break;
-                case HandRank.Flush:
-                    cmp = CompareHighCardRecursive(hand1, hand2);
-                    break;
-                case HandRank.Straight:
-                    cmp = CompareHighCard(hand1, hand2);
-                    break;
-                case HandRank.TwoPair :
-                    cmp = CompareTwoPair(hand1, hand2);
-                    break;
-                case HandRank.Pair:
-                    cmp = ComparePair(hand1, hand2);
-                    break;
-                case HandRank.HighCard :
-                    cmp = CompareHighCard(hand1, hand2);
-                    break;
-                default:
-                    break;
-            }
-            return (cmp > 0) ? hand1.HandName : cmp < 0 ? hand2.HandName : "Tie";
-
-        }
-
-        private static int[] GetCardValuesFromHand(Card[] hand)
-        {
-            int[] cardValues = new int[hand.Length];
-            for (int i = 0; i < hand.Length; i++)
-            {
-                cardValues[i] = hand[i].Value;
-            }
-            return cardValues;
-        }
-
+        
     }
 }
