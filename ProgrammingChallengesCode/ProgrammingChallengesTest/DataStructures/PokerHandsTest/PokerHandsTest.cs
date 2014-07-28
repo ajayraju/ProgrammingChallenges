@@ -8,7 +8,7 @@ namespace ProgrammingChallengesTest.DataStructures.PokerHandsTest
     public class PokerHandsTest
     {
         [TestMethod]
-        public void TestMethod1()
+        public void TestWhiteWinner()
         {
             string handString = "2H 4S 4C 2D 4H 2S 8S AS QS 3S";
             string blackHandString = null;
@@ -19,6 +19,19 @@ namespace ProgrammingChallengesTest.DataStructures.PokerHandsTest
             PokerOutcome result = PokerHands.GetWinner(blackHand, whiteHand);
             Assert.AreEqual(PokerOutcome.Black,result);
 
+        }
+
+        [TestMethod]
+        public void TestTieScenario()
+        {
+            string handString = "2H 3D 5S 9C KD 2D 3H 5C 9S KH";
+            string blackHandString = null;
+            string whiteHandString = null;
+            GetHands(handString,ref blackHandString, ref whiteHandString);
+            Hand blackHand  =  new Hand(blackHandString,HandName.Black);
+            Hand whiteHand = new Hand(whiteHandString, HandName.White);
+            PokerOutcome result = PokerHands.GetWinner(blackHand, whiteHand);
+            Assert.AreEqual(PokerOutcome.Tie,result);
         }
 
         private void GetHands(string handString, ref string blackHandString, ref string whiteHandString)
