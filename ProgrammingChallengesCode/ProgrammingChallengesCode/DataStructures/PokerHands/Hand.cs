@@ -23,6 +23,24 @@ namespace ProgrammingChallengesCode.DataStructures.PokerHands
         FourOfAKind,
         StraightFlush
     }
+    /// <summary>
+    /// Enum to inidcate the name of a hand.
+    /// </summary>
+    public enum HandName
+    {
+        White,
+        Black
+    }
+
+    /// <summary>
+    /// Enum to indicate the outcome of a poker game.
+    /// </summary>
+    public enum PokerOutcome 
+    {
+       Black,
+       White,
+       Tie 
+    }
 
     /// <summary>
     /// Class to model a hand in a game of poker.
@@ -31,9 +49,9 @@ namespace ProgrammingChallengesCode.DataStructures.PokerHands
     {
         
         public Card[] HandCards { get; private set; }
-        public string HandName { get; private set; }
+        public HandName HandName { get; private set; }
 
-        public Hand(string handString, string name)
+        public Hand(string handString, HandName name)
         {
             string[] cards = handString.Split(new char[] {' '});
             HandCards =  new Card[cards.Length];
@@ -379,9 +397,6 @@ namespace ProgrammingChallengesCode.DataStructures.PokerHands
             else if (tempCards[2].Equals(tempCards[4])) return tempCards[2];
             return null;
         }
-
-        
-
         #endregion
         
     }

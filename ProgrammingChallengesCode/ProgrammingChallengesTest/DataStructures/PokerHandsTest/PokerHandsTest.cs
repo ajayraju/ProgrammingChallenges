@@ -10,12 +10,24 @@ namespace ProgrammingChallengesTest.DataStructures.PokerHandsTest
         [TestMethod]
         public void TestMethod1()
         {
-            //string twoHands = ;
-            string blackHandString = "2H 3D 5S 9C KD";
-            string whiteHandString = "2C 3H 4S 8C AH";
-            Hand blackHand = new Hand(blackHandString, "Black");
-            Hand whiteHand = new Hand(whiteHandString, "White");
-            string result = PokerHands.GetWinner(blackHand, whiteHand);
+            string handString = "2H 4S 4C 2D 4H 2S 8S AS QS 3S";
+            string blackHandString = null;
+            string whiteHandString = null;
+            GetHands(handString,ref blackHandString,ref whiteHandString);
+            Hand blackHand = new Hand(blackHandString, HandName.Black);
+            Hand whiteHand = new Hand(whiteHandString, HandName.White);
+            PokerOutcome result = PokerHands.GetWinner(blackHand, whiteHand);
+            Assert.AreEqual(PokerOutcome.Black,result);
+
+        }
+
+        private void GetHands(string handString, ref string blackHandString, ref string whiteHandString)
+        {
+            if (!string.IsNullOrWhiteSpace(handString))
+            {
+                blackHandString = handString.Substring(0, handString.Length / 2);
+                whiteHandString = handString.Substring(handString.Length / 2 + 1);
+            }
         }
     }
 }
