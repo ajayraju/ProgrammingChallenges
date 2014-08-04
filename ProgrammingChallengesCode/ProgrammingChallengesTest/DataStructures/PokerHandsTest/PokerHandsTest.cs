@@ -7,6 +7,7 @@ namespace ProgrammingChallengesTest.DataStructures.PokerHandsTest
     [TestClass]
     public class PokerHandsTest
     {
+
         [TestMethod]
         public void TestWhiteWinner()
         {
