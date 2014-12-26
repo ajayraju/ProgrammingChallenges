@@ -39,6 +39,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataStructures\CryptKicker.cs" />
+    <Compile Include="DataStructures\Hartals\Hartals.cs" />
     <Compile Include="DataStructures\JollyJumpers\JollyJumpers.cs" />
     <Compile Include="DataStructures\PokerHands\Hand.cs" />
     <Compile Include="DataStructures\PokerHands\Card.cs" />
