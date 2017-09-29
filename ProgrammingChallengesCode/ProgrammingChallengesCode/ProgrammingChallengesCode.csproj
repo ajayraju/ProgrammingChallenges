@@ -45,6 +45,9 @@
     <Compile Include="DataStructures\PokerHands\Hand.cs" />
     <Compile Include="DataStructures\PokerHands\Card.cs" />
     <Compile Include="DataStructures\PokerHands\PokerHands.cs" />
+    <Compile Include="DataStructures\StackEmUp\Card.cs" />
+    <Compile Include="DataStructures\StackEmUp\Deck.cs" />
+    <Compile Include="DataStructures\StackEmUp\StackEmUp.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />
